@@ -102,7 +102,7 @@ export default function request(methodName, params, idNo, jwt) {
   if (methodName === 'user.Authenticate') {
     authorizationData = `Bearer ${jwt.apiKey} ${jwt.token}`;
   } else {
-    authorizationData = `Bearer ${jwt.token}`;
+    authorizationData = 'Bearer ' + jwt;
   }
   const rpcRequest = getRpcRequest(methodName, params, idNo);
   const requestOptions = {

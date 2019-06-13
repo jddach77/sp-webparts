@@ -35,12 +35,13 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
   }
 
   public getProfileOptions() {
-    console.log(this.state)
+    let jwt = this.state.accessToken;
+    console.log('juans token\n',jwt)
     request(
       'profile.GetInputOptions',
       '',
       3,
-      this.state.accessToken
+      jwt
     ).then(res => {
         this.setState({
           profileOptions: res.result
