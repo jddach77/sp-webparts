@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "profile-update-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/profileUpdate/ProfileUpdateWebPart.js",
+          "manifest": "./src/webparts/profileUpdate/ProfileUpdateWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "ProfileUpdateWebPartStrings": "lib/webparts/profileUpdate/loc/{locale}.js"
+  }
+}
