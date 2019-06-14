@@ -19,24 +19,8 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
     }
   }
 
-  public componentDidMount(): void {
-    request(
-      'user.Authenticate',
-      '',
-      10,
-      this.createJWTObject(
-        '5dc78bab-4988-4a15-96a2-9eb084fba6f6',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6Ikp1YW4gU29sbyIsImlhdCI6IjE1MTYyMzkwMjIiLCJ1c2VySUQiOiIxMjIzNDIzNCJ9.cwsPTigweDKmVQgShW_BwcwIjVgNVTeIkT_buJbNIqs'
-    )).then(res => {
-        this.setState({
-          accessToken: res.result.jwt_access_token
-        })
-      })
-  }
-
   public getProfileOptions() {
     let jwt = this.state.accessToken;
-    console.log('juans token\n',jwt)
     request(
       'profile.GetInputOptions',
       '',
@@ -49,8 +33,20 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
       })
   }
 
-  public componentDidUpdate(): void {
-    this.getProfileOptions();
+  public componentDidMount(): void {
+    request(
+      'user.Authenticate',
+      '',
+      10,
+      this.createJWTObject(
+        '5dc78bab-4988-4a15-96a2-9eb084fba6f6',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6Ikp1YW4gU29sbyIsImlhdCI6IjE1MTYyMzkwMjIiLCJ1c2VySUQiOiIxMjIzNDIzNCJ9.cwsPTigweDKmVQgShW_BwcwIjVgNVTeIkT_buJbNIqs'
+    ))
+    .then(res => {
+      this.setState({
+        accessToken: res.result.jwt_access_token
+      }, () => this.getProfileOptions() )
+    })
   }
 
   createJWTObject = (apiKey, jwtToken) => {
