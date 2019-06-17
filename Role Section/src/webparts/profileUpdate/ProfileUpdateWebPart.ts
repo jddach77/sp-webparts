@@ -21,7 +21,9 @@ export default class ProfileUpdateWebPart extends BaseClientSideWebPart<IProfile
     const element: React.ReactElement<IProfileUpdateProps > = React.createElement(
       ProfileUpdate,
       {
-        description: this.properties.description
+        description: this.properties.description,
+        pageContext: this.context.pageContext
+
       }
     );
 

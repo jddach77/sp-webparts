@@ -1,4 +1,4 @@
 export interface IProfileUpdateState {
   accessToken: string;
-  profileOptions: object;
+  profileOptions: any;
 }

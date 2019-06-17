@@ -6,9 +6,11 @@ import { IProfileUpdateState } from './IProfileUpdateState';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { setAccessToken } from '../actions/userAuthenticateActions';
 import request from '../utils/request';
+import { sign } from 'jsonwebtoken';
 
 import { Provider } from 'react-redux';
 import configureStore from '../store/configureStore';
+const secret = 'secret-key'
 
 export default class ProfileUpdate extends React.Component<IProfileUpdateProps, IProfileUpdateState> {
   constructor(props: IProfileUpdateProps) {
@@ -17,6 +19,45 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
       accessToken: '',
       profileOptions: {}
     }
+  }
+
+  public sectorUpdate(value) {
+    let result = {
+      sector: parseInt(value)
+    }
+    let jwt = this.state.accessToken;
+    request(
+      'profile.Update',
+      result,
+      10,
+      jwt
+    )
+  }
+
+  public functionUpdate(value) {
+    let result = {
+      function: parseInt(value)
+    }
+    let jwt = this.state.accessToken;
+    request(
+      'profile.Update',
+      result,
+      10,
+      jwt
+    )
+  }
+
+  public seniorityUpdate(value) {
+    let result = {
+      seniority: parseInt(value)
+    }
+    let jwt = this.state.accessToken;
+    request(
+      'profile.Update',
+      result,
+      10,
+      jwt
+    )
   }
 
   public getProfileOptions() {
@@ -40,13 +81,12 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
       10,
       this.createJWTObject(
         '5dc78bab-4988-4a15-96a2-9eb084fba6f6',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6Ikp1YW4gU29sbyIsImlhdCI6IjE1MTYyMzkwMjIiLCJ1c2VySUQiOiIxMjIzNDIzNCJ9.cwsPTigweDKmVQgShW_BwcwIjVgNVTeIkT_buJbNIqs'
-    ))
-    .then(res => {
-      this.setState({
-        accessToken: res.result.jwt_access_token
-      }, () => this.getProfileOptions() )
-    })
+        this.buildAuthClaims()
+    )).then(res => {
+        this.setState({
+          accessToken: res.result.jwt_access_token
+        }, () => this.getProfileOptions() )
+      })
   }
 
   createJWTObject = (apiKey, jwtToken) => {
@@ -54,23 +94,63 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
     return jwt;
   };
 
+  buildAuthClaims = () => {
+    let userData = {
+      userID: this.props.pageContext.aadInfo.userId._guid,
+      name: this.props.pageContext.user.displayName,
+      email: this.props.pageContext.user.email
+    }
+    let payload = JSON.stringify(userData)
+    return sign(payload, secret)
+  }
+
   public render(): React.ReactElement<IProfileUpdateProps> {
     return (
       <div className={ styles.profileUpdate }>
         <div className={ styles.container }>
           <div className={ styles.row }>
             <div className={ styles.column }>
-              <span className={ styles.title }>Welcome to SharePoint!</span>
-              <p className={ styles.subTitle }>Customize SharePoint experiences using Web Parts.</p>
-              <p>select your sector</p>
-              <select>
-                <option>Juan</option>
-                <option>Two</option>
+              <span className={ styles.title }>What's your role?</span>
+              <p className={ styles.subTitle }>Update your profile information to improve your learning recommendations.</p>
+              <p>Select your sector</p>
+              <select onChange={ e => this.sectorUpdate(e.target.value)}>
+              {
+                this.state.profileOptions.sector &&
+                this.state.profileOptions.sector.map( sector => {
+                  return (
+                    <option key={sector.id} value={sector.id}>
+                      {sector.label}
+                    </option>
+                  )
+                })
+              }
               </select>
-              <p className={ styles.description }>{escape(this.props.description)}</p>
-              <a href="https://aka.ms/spfx" className={ styles.button }>
-                <span className={ styles.label }>Learn more</span>
-              </a>
+              <p>Select your department</p>
+              <select onChange={ e => this.functionUpdate(e.target.value)}>
+              {
+                this.state.profileOptions.function &&
+                this.state.profileOptions.function.map( profileFunction => {
+                  return (
+                    <option key={profileFunction.id} value={profileFunction.id}>
+                      {profileFunction.label}
+                    </option>
+                  )
+                })
+              }
+              </select>
+              <p>Select your seniorty level</p>
+              <select onChange={ e => this.seniorityUpdate(e.target.value)}>
+              {
+                this.state.profileOptions.seniority &&
+                this.state.profileOptions.seniority.map( seniority => {
+                  return (
+                    <option key={seniority.id} value={seniority.id}>
+                      {seniority.label}
+                    </option>
+                  )
+                })
+              }
+              </select>
             </div>
           </div>
         </div>
