@@ -7,7 +7,6 @@ import { escape } from '@microsoft/sp-lodash-subset';
 import { setAccessToken } from '../actions/userAuthenticateActions';
 import request from '../utils/request';
 import { sign } from 'jsonwebtoken';
-import MockHttpClient from './MockHttpClient';
 import {
   Environment,
   EnvironmentType
@@ -31,10 +30,6 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
       profileOptions: {},
       requestPayload: ''
     }
-  }
-
-  private _getMockUserData(): Promise<IUserData> {
-    return MockHttpClient.get() as Promise<IUserData>;
   }
 
   public sectorUpdate(value) {
@@ -99,7 +94,6 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
         '5dc78bab-4988-4a15-96a2-9eb084fba6f6',
         this.buildAuthClaims()
     )).then(res => {
-        debugger
         this.setState({
           accessToken: res.result.jwt_access_token
         }, () => this.getProfileOptions() )
@@ -121,12 +115,13 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
       let payload = JSON.stringify(userData)
       return sign(payload, secret)
     } else if (Environment.type === EnvironmentType.Local) {
-      let userData = this._getMockUserData().then(res => {
-        this.setState({
-          requestPayload: JSON.stringify(res, null, 2)
-        })
-      });
-      return sign(this.state.requestPayload, secret)
+      let userData = {
+        userID: 'any-user-id-2343',
+        name: 'John Doe',
+        email: 'john.doe@fakemail.com'
+      }
+      let payload = JSON.stringify(userData)
+      return sign(payload, secret)
     }
   }
 
