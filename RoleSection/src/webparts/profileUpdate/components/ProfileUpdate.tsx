@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import styles from './ProfileUpdate.module.scss';
 import { IProfileUpdateProps } from './IProfileUpdateProps';
 import { IProfileUpdateState } from './IProfileUpdateState';
 import { escape } from '@microsoft/sp-lodash-subset';
-import { setAccessToken } from '../actions/userAuthenticateActions';
 import request from '../utils/request';
 import { sign } from 'jsonwebtoken';
 import {
@@ -12,9 +10,7 @@ import {
   EnvironmentType
 } from '@microsoft/sp-core-library';
 
-import { Provider } from 'react-redux';
-import configureStore from '../store/configureStore';
-const secret = 'secret-key'
+const secret = 'secret-key';
 
 export interface IUserData {
   userID: string;
@@ -29,46 +25,46 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
       accessToken: '',
       profileOptions: {},
       requestPayload: ''
-    }
+    };
   }
 
   public sectorUpdate(value) {
     let result = {
       sector: parseInt(value)
-    }
+    };
     let jwt = this.state.accessToken;
     request(
       'profile.Update',
       result,
       10,
       jwt
-    )
+    );
   }
 
   public functionUpdate(value) {
     let result = {
       function: parseInt(value)
-    }
+    };
     let jwt = this.state.accessToken;
     request(
       'profile.Update',
       result,
       10,
       jwt
-    )
+    );
   }
 
   public seniorityUpdate(value) {
     let result = {
       seniority: parseInt(value)
-    }
+    };
     let jwt = this.state.accessToken;
     request(
       'profile.Update',
       result,
       10,
       jwt
-    )
+    );
   }
 
   public getProfileOptions() {
@@ -81,8 +77,8 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
     ).then(res => {
         this.setState({
           profileOptions: res.result
-        })
-      })
+        });
+      });
   }
 
   public componentDidMount(): void {
@@ -96,32 +92,32 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
     )).then(res => {
         this.setState({
           accessToken: res.result.jwt_access_token
-        }, () => this.getProfileOptions() )
-      })
+        }, () => this.getProfileOptions() );
+      });
   }
 
-  createJWTObject = (apiKey, jwtToken) => {
+  public createJWTObject = (apiKey, jwtToken) => {
     const jwt = { token: jwtToken, apiKey: apiKey };
     return jwt;
-  };
+  }
 
-  buildAuthClaims = () => {
+  public buildAuthClaims = () => {
     if (Environment.type === EnvironmentType.SharePoint) {
       let userData = {
         userID: this.props.pageContext.aadInfo.userId._guid,
         name: this.props.pageContext.user.displayName,
         email: this.props.pageContext.user.email
-      }
-      let payload = JSON.stringify(userData)
-      return sign(payload, secret)
+      };
+      let payload = JSON.stringify(userData);
+      return sign(payload, secret);
     } else if (Environment.type === EnvironmentType.Local) {
       let userData = {
         userID: 'any-user-id-2343',
         name: 'John Doe',
         email: 'john.doe@fakemail.com'
-      }
-      let payload = JSON.stringify(userData)
-      return sign(payload, secret)
+      };
+      let payload = JSON.stringify(userData);
+      return sign(payload, secret);
     }
   }
 
@@ -142,7 +138,7 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
                     <option key={sector.id} value={sector.id}>
                       {sector.label}
                     </option>
-                  )
+                  );
                 })
               }
               </select>
@@ -155,7 +151,7 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
                     <option key={profileFunction.id} value={profileFunction.id}>
                       {profileFunction.label}
                     </option>
-                  )
+                  );
                 })
               }
               </select>
@@ -168,7 +164,7 @@ export default class ProfileUpdate extends React.Component<IProfileUpdateProps, 
                     <option key={seniority.id} value={seniority.id}>
                       {seniority.label}
                     </option>
-                  )
+                  );
                 })
               }
               </select>
