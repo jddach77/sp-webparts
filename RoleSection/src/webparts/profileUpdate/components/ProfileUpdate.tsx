@@ -80,10 +80,7 @@ export default class ProfileUpdate extends React.Component<
       "user.Authenticate",
       "",
       10,
-      this.createJWTObject(
-        API_KEY,
-        this.buildAuthClaims()
-      )
+      this.createJWTObject(API_KEY, this.buildAuthClaims())
     ).then(res => {
       this.setState(
         {
