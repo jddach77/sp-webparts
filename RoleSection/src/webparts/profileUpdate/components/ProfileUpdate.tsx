@@ -7,7 +7,8 @@ import request from "../utils/request";
 import { sign } from "jsonwebtoken";
 import { Environment, EnvironmentType } from "@microsoft/sp-core-library";
 
-const secret = "secret-key";
+const SECRET = "secret-key";
+const API_KEY = "5dc78bab-4988-4a15-96a2-9eb084fba6f6";
 
 export default class ProfileUpdate extends React.Component<
   IProfileUpdateProps,
@@ -80,7 +81,7 @@ export default class ProfileUpdate extends React.Component<
       "",
       10,
       this.createJWTObject(
-        "5dc78bab-4988-4a15-96a2-9eb084fba6f6",
+        API_KEY,
         this.buildAuthClaims()
       )
     ).then(res => {
@@ -107,7 +108,7 @@ export default class ProfileUpdate extends React.Component<
         email: this.props.pageContext.user.email
       };
       let payload = JSON.stringify(userData);
-      return sign(payload, secret);
+      return sign(payload, SECRET);
     } else if (Environment.type === EnvironmentType.Local) {
       let userData = {
         userID: "any-user-id-2343",
@@ -115,7 +116,7 @@ export default class ProfileUpdate extends React.Component<
         email: "john.doe@fakemail.com"
       };
       let payload = JSON.stringify(userData);
-      return sign(payload, secret);
+      return sign(payload, SECRET);
     }
   };
 
