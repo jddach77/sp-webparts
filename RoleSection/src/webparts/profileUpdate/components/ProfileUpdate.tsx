@@ -4,7 +4,7 @@ import { IProfileUpdateProps } from "./IProfileUpdateProps";
 import { IProfileUpdateState } from "./IProfileUpdateState";
 import { escape } from "@microsoft/sp-lodash-subset";
 import request from "../utils/request";
-import { sign } from "jsonwebtoken";
+import { sign, decode } from "jsonwebtoken";
 import { Environment, EnvironmentType } from "@microsoft/sp-core-library";
 
 const SECRET = "secret-key";
@@ -19,13 +19,18 @@ export default class ProfileUpdate extends React.Component<
     this.state = {
       accessToken: "",
       refreshToken: "",
-      profileOptions: {}
+      profileOptions: {},
+      sector: "",
+      function: "",
+      seniority: ""
     };
   }
 
   public tokenRefresh() {
-    let jwt = this.state.refreshToken;
-    request("user.Refresh", "", 1, jwt).then(res => {
+    console.log("refresh starting now...");
+    let jwt = this.state.accessToken;
+    let refreshToken = this.state.refreshToken;
+    request("token.Refresh", refreshToken, 1, jwt).then(res => {
       this.setState({
         accessToken: res.result.jwt_access_token,
         refreshToken: res.result.refresh_token
@@ -34,6 +39,12 @@ export default class ProfileUpdate extends React.Component<
   }
 
   public sectorUpdate(value) {
+    let date = new Date();
+    let timestamp = date.getTime() / 1000;
+    let decoded = decode(this.state.accessToken);
+    if (decoded.exp < timestamp) {
+      this.tokenRefresh();
+    }
     let result = {
       sector: parseInt(value)
     };
@@ -44,6 +55,12 @@ export default class ProfileUpdate extends React.Component<
   }
 
   public functionUpdate(value) {
+    let date = new Date();
+    let timestamp = date.getTime() / 1000;
+    let decoded = decode(this.state.accessToken);
+    if (decoded.exp < timestamp) {
+      this.tokenRefresh();
+    }
     let result = {
       function: parseInt(value)
     };
@@ -54,6 +71,12 @@ export default class ProfileUpdate extends React.Component<
   }
 
   public seniorityUpdate(value) {
+    let date = new Date();
+    let timestamp = date.getTime() / 1000;
+    let decoded = decode(this.state.accessToken);
+    if (decoded.exp < timestamp) {
+      this.tokenRefresh();
+    }
     let result = {
       seniority: parseInt(value)
     };
@@ -63,15 +86,38 @@ export default class ProfileUpdate extends React.Component<
     });
   }
 
+  public getUserProfile() {
+    let date = new Date();
+    let timestamp = date.getTime() / 1000;
+    let decoded = decode(this.state.accessToken);
+    if (decoded.exp < timestamp) {
+      this.tokenRefresh();
+    }
+    let jwt = this.state.accessToken;
+    request("profile.Get", "", 5, jwt).then(res => {
+      this.setState({
+        sector: res.sector,
+        function: res.function,
+        seniority: res.seniorty
+      });
+    });
+  }
+
   public getProfileOptions() {
+    let date = new Date();
+    let timestamp = date.getTime() / 1000;
+    let decoded = decode(this.state.accessToken);
+    if (decoded.exp < timestamp) {
+      this.tokenRefresh();
+    }
     let jwt = this.state.accessToken;
     request("profile.GetInputOptions", "", 3, jwt).then(res => {
-      if (res.status === 401) {
-        this.tokenRefresh();
-      }
-      this.setState({
-        profileOptions: res.result
-      });
+      this.setState(
+        {
+          profileOptions: res.result
+        },
+        () => this.getUserProfile()
+      );
     });
   }
 
