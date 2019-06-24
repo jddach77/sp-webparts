@@ -2,6 +2,12 @@
   "@microsoft/generator-sharepoint": {
     "isCreatingSolution": true,
     "environment": "spo",
-    "whichFolder": "subdir"
+    "whichFolder": "subdir",
+    "version": "1.8.2",
+    "libraryName": "magpie",
+    "libraryId": "4ebdf7d9-f181-4b68-8c82-89ae233ffede",
+    "packageManager": "npm",
+    "isDomainIsolated": false,
+    "componentType": "webpart"
   }
 }
