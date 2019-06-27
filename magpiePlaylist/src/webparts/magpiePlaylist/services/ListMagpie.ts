@@ -5,10 +5,10 @@ import { PageContext } from "@microsoft/sp-page-context";
 import { ListItem } from "./ListItem";
 import { IListService } from "./IListService";
 
-export class ListSharePoint implements IListService {
+export class ListMagpie implements IListService {
   public static readonly serviceKey: ServiceKey<
     IListService
-  > = ServiceKey.create<IListService>("vrd:IListService", ListSharePoint);
+  > = ServiceKey.create<IListService>("vrd:IListService", ListMagpie);
   private _spHttpClient: SPHttpClient;
   private _pageContext: PageContext;
   private _currentWebUrl: string;

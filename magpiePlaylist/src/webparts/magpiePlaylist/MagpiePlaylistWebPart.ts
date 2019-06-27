@@ -19,7 +19,8 @@ import ReactSlideSwiper from "./components/MagpiePlaylist";
 import { IMagpiePlaylistProps } from "./components/IMagpiePlaylistProps";
 import { IListService } from "./services/IListService";
 import { ListMock } from "./services/ListMock";
-import { ListSharePoint } from "./services/ListSharePoint";
+import { ListMagpie } from "./services/ListMagpie";
+import request from "./services/Request";
 
 export interface IReactSlideSwiperWebPartProps {
   enableNavigation: boolean;
@@ -45,9 +46,7 @@ export default class ReactSlideSwiperWebPart extends BaseClientSideWebPart<
     if (Environment.type === EnvironmentType.Local) {
       listProvider = new ListMock();
     } else if (Environment.type == EnvironmentType.SharePoint) {
-      listProvider = this.context.serviceScope.consume(
-        ListSharePoint.serviceKey
-      );
+      listProvider = new ListMock();
     }
 
     const element: React.ReactElement<

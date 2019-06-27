@@ -1,8 +1,6 @@
 import * as React from "react";
 import styles from "./MagpiePlaylist.module.scss";
 import { IMagpiePlaylistProps } from "./IMagpiePlaylistProps";
-import { escape } from "@microsoft/sp-lodash-subset";
-
 import { IMagpiePlaylistState } from "./IMagpiePlaylistState";
 import { ListItem } from "../services/ListItem";
 import Card from "./Card/Card";
