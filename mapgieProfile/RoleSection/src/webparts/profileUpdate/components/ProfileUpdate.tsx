@@ -6,6 +6,7 @@ import { escape } from "@microsoft/sp-lodash-subset";
 import request from "../utils/request";
 import { sign, decode } from "jsonwebtoken";
 import { Environment, EnvironmentType } from "@microsoft/sp-core-library";
+import Slider from "react-slick";
 
 const SECRET = "secret-key";
 const API_KEY = "5dc78bab-4988-4a15-96a2-9eb084fba6f6";
@@ -22,7 +23,9 @@ export default class ProfileUpdate extends React.Component<
       profileOptions: {},
       sector: "",
       function: "",
-      seniority: ""
+      seniority: "",
+      open: false,
+      topTray: ""
     };
   }
 
@@ -34,6 +37,21 @@ export default class ProfileUpdate extends React.Component<
       this.setState({
         accessToken: res.result.jwt_access_token,
         refreshToken: res.result.refresh_token
+      });
+    });
+  }
+
+  public getBifrostRex() {
+    let date = new Date();
+    let timestamp = date.getTime() / 1000;
+    let decoded = decode(this.state.accessToken);
+    if (decoded.exp < timestamp) {
+      this.tokenRefresh();
+    }
+    let jwt = this.state.accessToken;
+    request("playlist.FetchBifrostPlaylists", "", 5, jwt).then(res => {
+      this.setState({
+        topTray: res.result[0]
       });
     });
   }
@@ -95,11 +113,14 @@ export default class ProfileUpdate extends React.Component<
     }
     let jwt = this.state.accessToken;
     request("profile.Get", "", 5, jwt).then(res => {
-      this.setState({
-        sector: res.sector,
-        function: res.function,
-        seniority: res.seniorty
-      });
+      this.setState(
+        {
+          sector: res.sector,
+          function: res.function,
+          seniority: res.seniorty
+        },
+        () => this.getBifrostRex()
+      );
     });
   }
 
@@ -164,55 +185,82 @@ export default class ProfileUpdate extends React.Component<
   };
 
   public render(): React.ReactElement<IProfileUpdateProps> {
+    var settings = {
+      dots: false,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 1,
+      slidesToScroll: 1
+    };
+
     return (
-      <div className={styles.profileUpdate}>
-        <div className={styles.container}>
-          <div className={styles.row}>
-            <div className={styles.column}>
-              <span className={styles.title}>What's your role?</span>
-              <p className={styles.subTitle}>
-                Update your profile information to improve your learning
-                recommendations.
-              </p>
-              <p>Select your sector</p>
-              <select onChange={e => this.sectorUpdate(e.target.value)}>
-                {this.state.profileOptions.sector &&
-                  this.state.profileOptions.sector.map(sector => {
-                    return (
-                      <option key={sector.id} value={sector.id}>
-                        {sector.label}
-                      </option>
-                    );
-                  })}
-              </select>
-              <p>Select your department</p>
-              <select onChange={e => this.functionUpdate(e.target.value)}>
-                {this.state.profileOptions.function &&
-                  this.state.profileOptions.function.map(profileFunction => {
-                    return (
-                      <option
-                        key={profileFunction.id}
-                        value={profileFunction.id}
-                      >
-                        {profileFunction.label}
-                      </option>
-                    );
-                  })}
-              </select>
-              <p>Select your seniorty level</p>
-              <select onChange={e => this.seniorityUpdate(e.target.value)}>
-                {this.state.profileOptions.seniority &&
-                  this.state.profileOptions.seniority.map(seniority => {
-                    return (
-                      <option key={seniority.id} value={seniority.id}>
-                        {seniority.label}
-                      </option>
-                    );
-                  })}
-              </select>
+      <div>
+        <div className={styles.profileUpdate}>
+          <div className={styles.container}>
+            <div className={styles.row}>
+              <div className={styles.column}>
+                <span className={styles.title}>What's your role?</span>
+                <p className={styles.subTitle}>
+                  Update your profile information to improve your learning
+                  recommendations.
+                </p>
+                <p>Select your sector</p>
+                <select onChange={e => this.sectorUpdate(e.target.value)}>
+                  {this.state.profileOptions.sector &&
+                    this.state.profileOptions.sector.map(sector => {
+                      return (
+                        <option key={sector.id} value={sector.id}>
+                          {sector.label}
+                        </option>
+                      );
+                    })}
+                </select>
+                <p>Select your department</p>
+                <select onChange={e => this.functionUpdate(e.target.value)}>
+                  {this.state.profileOptions.function &&
+                    this.state.profileOptions.function.map(profileFunction => {
+                      return (
+                        <option
+                          key={profileFunction.id}
+                          value={profileFunction.id}
+                        >
+                          {profileFunction.label}
+                        </option>
+                      );
+                    })}
+                </select>
+                <p>Select your seniorty level</p>
+                <select onChange={e => this.seniorityUpdate(e.target.value)}>
+                  {this.state.profileOptions.seniority &&
+                    this.state.profileOptions.seniority.map(seniority => {
+                      return (
+                        <option key={seniority.id} value={seniority.id}>
+                          {seniority.label}
+                        </option>
+                      );
+                    })}
+                </select>
+              </div>
             </div>
           </div>
         </div>
+        <Slider {...settings}>
+          {this.state.topTray &&
+            Object.entries(this.state.topTray.laList).map((la: any) => {
+              return (
+                <div key={la[1].id}>
+                  <h3>{la[1].title}</h3>
+                  <div>
+                    <img src={la[1].screenshotImage} />
+                  </div>
+                  <p>{la[1].description}</p>
+                  <a href={la[1].directUrl} target="blank">
+                    Launch
+                  </a>
+                </div>
+              );
+            })}
+        </Slider>
       </div>
     );
   }

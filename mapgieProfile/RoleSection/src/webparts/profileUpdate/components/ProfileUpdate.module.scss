@@ -1,4 +1,32 @@
-@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
+@import "~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss";
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
+
+h3 {
+  background: #005a9e;
+  color: #fff;
+  font-size: 20px;
+  line-height: 50px;
+  margin: 10px;
+  padding: 2%;
+  position: relative;
+  text-align: center;
+}
+
+img {
+  max-width: 700px;
+  margin: auto;
+}
+
+a {
+  background: pink;
+  font-size: 16px;
+  color: black;
+  text-align: center;
+  padding: 1%;
+  margin-left: 44%;
+  margin-right: 44%;
+}
 
 .profileUpdate {
   .container {
@@ -51,7 +79,8 @@
     // Basic Button
     outline: transparent;
     position: relative;
-    font-family: "Segoe UI WestEuropean","Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",sans-serif;
+    font-family: "Segoe UI WestEuropean", "Segoe UI", -apple-system,
+      BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
     -webkit-font-smoothing: antialiased;
     font-size: $ms-font-size-m;
     font-weight: $ms-font-weight-regular;

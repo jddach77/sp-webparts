@@ -5,4 +5,6 @@ export interface IProfileUpdateState {
   sector: string;
   function: string;
   seniority: string;
+  open: boolean;
+  topTray: any;
 }
